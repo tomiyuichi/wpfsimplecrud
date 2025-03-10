@@ -11,18 +11,30 @@ public class MainViewModel
 
     public string Username { get; set; }
     public string Email { get; set; }
-    public User SelectedUser { get; set; }
+    // public User SelectedUser { get; set; }
 
     public ICommand AddCommand { get; }
     public ICommand UpdateCommand { get; }
     public ICommand DeleteCommand { get; }
 
+    private User _selectedUser;
+    public User SelectedUser
+    {
+        get => _selectedUser;
+        set
+        {
+            _selectedUser = value;
+            (UpdateCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            (DeleteCommand as RelayCommand)?.RaiseCanExecuteChanged();
+        }
+    }
+
     public MainViewModel()
     {
         LoadData();
-        AddCommand = new RelayCommand(AddUser);
-        UpdateCommand = new RelayCommand(UpdateUser, () => SelectedUser != null);
-        DeleteCommand = new RelayCommand(DeleteUser, () => SelectedUser != null);
+        AddCommand = (ICommand)new RelayCommand(AddUser);
+        UpdateCommand = (ICommand)new RelayCommand(UpdateUser, () => SelectedUser != null);
+        DeleteCommand = (ICommand)new RelayCommand(DeleteUser, () => SelectedUser != null);
     }
 
     private void LoadData()
